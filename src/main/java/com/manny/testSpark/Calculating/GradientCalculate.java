@@ -5,7 +5,10 @@ import org.apache.spark.api.java.JavaRDD;
 
 public class GradientCalculate {
 
-    public static double[] train(JavaRDD<DataPoint> points, double TOLERANCE, int ITERATIONS) {
+    private static double TOLERANCE = 1E-11;
+
+    public static double[] train(JavaRDD<DataPoint> points, double STEP, int ITERATIONS) {
+
         int iterations = 0;
 
         double[] weight = new double[points.first().getX().length];
@@ -19,14 +22,14 @@ public class GradientCalculate {
             double summ;
 
 
-            points.map(new HThetaCalculate(weight));
+            JavaRDD<DataPoint> calcHTheta = points.map(new HThetaCalculate(weight)).cache();
             for (int j = 0; j < weight.length; j++) {
                 int finalJ = j;
-                summ = points.map(dataPoint ->
+                summ = calcHTheta.map(dataPoint ->
                         (dataPoint.gethTheta() - dataPoint.getY()) * dataPoint.getX()[finalJ])
                         .reduce((a, b) -> a + b);
 
-                weight[j] -= TOLERANCE / size * summ;
+                weight[j] -= STEP / size * summ;
             }
 
             if (isTolerance(temp, weight, TOLERANCE)) {

@@ -14,6 +14,7 @@ import static com.manny.testSpark.Calculating.GradientCalculate.train;
 public class Main {
 
     private static final double TOLERANCE = 1E-11;
+    private static final double STEP = 1E-8;
     private static String logFile = "/home/manny/Документы/test.txt";
     private static int ITERATIONS = 5000;
 
@@ -28,7 +29,7 @@ public class Main {
 
         JavaRDD<DataPoint> points = lines.map(new ParsePoint()).cache();
 
-        double[] weight = train(points, TOLERANCE, ITERATIONS);
+        double[] weight = train(points, STEP, ITERATIONS);
 
         double[] testData = {1.0, 90.0, 8100.0};
         System.out.println("FOR data " + Arrays.toString(testData) + " EXPECT " + getHypothetical(testData, weight));

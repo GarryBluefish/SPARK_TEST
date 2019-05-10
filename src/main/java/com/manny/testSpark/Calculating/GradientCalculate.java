@@ -29,7 +29,7 @@ public class GradientCalculate {
                         (dataPoint.gethTheta() - dataPoint.getY()) * dataPoint.getX()[finalJ])
                         .reduce((a, b) -> a + b);
 
-                weight[j] -= STEP / size * summ;
+                weight[j] -= TOLERANCE / size * summ;
             }
 
             if (isTolerance(temp, weight, TOLERANCE)) {

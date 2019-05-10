@@ -12,6 +12,7 @@ public class HThetaCalculate implements Function<DataPoint, DataPoint> {
 
     @Override
     public DataPoint call(DataPoint p) {
+        if (theta.length != p.getX().length) throw new ArrayIndexOutOfBoundsException("Weight size != DataPoint size");
         double hTheta = dot(theta, p.getX());
         p.sethTheta(hTheta);
         return p;

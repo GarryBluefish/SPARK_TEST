@@ -8,7 +8,7 @@ public class DataPoint implements Serializable {
     private double y;
     private double hTheta;
 
-    DataPoint(double[] x, double y) {
+    public DataPoint(double[] x, double y) {
         this.x = x;
         this.y = y;
         this.hTheta = 0;

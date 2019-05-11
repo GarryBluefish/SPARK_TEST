@@ -5,48 +5,40 @@ import org.apache.spark.api.java.JavaRDD;
 
 public class GradientCalculate {
 
-    private static double TOLERANCE = 1E-11;
-
-    public static double[] train(JavaRDD<DataPoint> points, double STEP, int ITERATIONS) {
-
-        int iterations = 0;
+    public static double[] train(JavaRDD<DataPoint> points, double step, int iterations, double tolerance) {
 
         double[] weight = new double[points.first().getX().length];
-        for (int i = 0; i < weight.length; i++) weight[i] = 1;
+        for (int i = 0; i < weight.length; i++) {
+            weight[i] = 1;
+        }
 
         long size = points.count();
 
-        do {
-            iterations++;
-            double[] temp = weight.clone();
-            double summ;
+        for (int i = 0; i < iterations; i++) {
 
-
-            JavaRDD<DataPoint> calcHTheta = points.map(new HThetaCalculate(weight)).cache();
+            points.foreach(new HThetaCalculate(weight));
             for (int j = 0; j < weight.length; j++) {
                 int finalJ = j;
-                summ = calcHTheta.map(dataPoint ->
+                double summ = points.map(dataPoint ->
                         (dataPoint.gethTheta() - dataPoint.getY()) * dataPoint.getX()[finalJ])
                         .reduce((a, b) -> a + b);
 
-                weight[j] -= TOLERANCE / size * summ;
+                weight[j] -= step / size * summ;
             }
 
-            if (isTolerance(temp, weight, TOLERANCE)) {
+            DataPoint temp = points.first();
+
+            if (isTolerance(temp, weight, tolerance)) {
                 break;
             }
-
-        } while (iterations < ITERATIONS);
+        }
 
         return weight;
     }
 
-    private static boolean isTolerance(double[] temp, double[] theta, double TOLERANCE) {
-        double summ = 0;
-        for (int i = 0; i < temp.length; i++) {
-            summ += (Math.abs(theta[i]) - Math.abs(temp[i]));
-        }
-        return summ > TOLERANCE;
+    private static boolean isTolerance(DataPoint temp, double[] theta, double tolerance) {
+        double y = getHypothetical(temp.getX(), theta);
+        return Math.abs(y) - Math.abs(temp.getY()) < tolerance;
     }
 
     public static double getHypothetical(double[] x, double[] weight) {

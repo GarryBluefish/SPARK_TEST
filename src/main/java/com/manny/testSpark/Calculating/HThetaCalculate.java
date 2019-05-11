@@ -1,21 +1,13 @@
 package com.manny.testSpark.Calculating;
 
 import com.manny.testSpark.Entities.DataPoint;
-import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.VoidFunction;
 
-public class HThetaCalculate implements Function<DataPoint, DataPoint> {
+public class HThetaCalculate implements VoidFunction<DataPoint> {
     private double[] theta;
 
     public HThetaCalculate(double[] theta) {
         this.theta = theta;
-    }
-
-    @Override
-    public DataPoint call(DataPoint p) {
-        if (theta.length != p.getX().length) throw new ArrayIndexOutOfBoundsException("Weight size != DataPoint size");
-        double hTheta = dot(theta, p.getX());
-        p.sethTheta(hTheta);
-        return p;
     }
 
     private double dot(double[] a, double[] b) {
@@ -24,5 +16,11 @@ public class HThetaCalculate implements Function<DataPoint, DataPoint> {
             x += (a[i] * b[i]);
         }
         return x;
+    }
+
+    @Override
+    public void call(DataPoint p) {
+        if (theta.length != p.getX().length) throw new ArrayIndexOutOfBoundsException("Weight size != DataPoint size");
+        p.sethTheta(dot(theta, p.getX()));
     }
 }

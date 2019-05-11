@@ -8,7 +8,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class GradientTest {
     private double TOLERANCE = 1E-1;
 
     @Before
-    public void init() throws IllegalArgumentException, IOException {
+    public void init() throws IllegalArgumentException {
         SparkConf conf = new SparkConf();
         conf.setMaster("local[*]");
         conf.setAppName("junit");
@@ -33,8 +32,8 @@ public class GradientTest {
         final List<DataPoint> nums = new ArrayList<>();
 
         double[] x1 = {1.0, 90.0, 8100.0};
-        double[] x2 = {2.0, 101.0, 10201.0};
-        double[] x3 = {3.0, 103.0, 10609.0};
+        double[] x2 = {1.0, 101.0, 10201.0};
+        double[] x3 = {1.0, 103.0, 10609.0};
         nums.add(new DataPoint(x1, 249.0));
         nums.add(new DataPoint(x2, 338.0));
         nums.add(new DataPoint(x3, 304.0));

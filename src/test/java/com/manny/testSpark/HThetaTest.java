@@ -37,7 +37,8 @@ public class HThetaTest {
         double[] x = {1, 2, 3};
         double[] weight = {1, 1, 1};
         nums.add(new DataPoint(x, 1));
-        JavaRDD<DataPoint> rdd = sparkCtx.parallelize(nums, 1).map(new HThetaCalculate(weight));
+        JavaRDD<DataPoint> rdd = sparkCtx.parallelize(nums).cache();
+        rdd.foreach(new HThetaCalculate(weight));
 
         assertEquals(6, rdd.collect().get(0).gethTheta(), 0);
         sparkCtx.stop();
@@ -54,7 +55,8 @@ public class HThetaTest {
         //thrown.expect(ArrayIndexOutOfBoundsException.class);
         thrown.expect(SparkException.class);
         //thrown.expectMessage("Weight size != DataPoint size");
-        JavaRDD<DataPoint> rdd = sparkCtx.parallelize(nums, 1).map(new HThetaCalculate(weight));
+        JavaRDD<DataPoint> rdd = sparkCtx.parallelize(nums).cache();
+        rdd.foreach(new HThetaCalculate(weight));
         rdd.collect();
 
         sparkCtx.stop();

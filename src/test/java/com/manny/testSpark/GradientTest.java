@@ -18,11 +18,12 @@ public class GradientTest {
 
     private JavaSparkContext sparkCtx;
     private double STEP = 1E-8;
+    private double TOLERANCE = 1E-1;
 
     @Before
     public void init() throws IllegalArgumentException, IOException {
         SparkConf conf = new SparkConf();
-        conf.setMaster("local[2]");
+        conf.setMaster("local[*]");
         conf.setAppName("junit");
         sparkCtx = new JavaSparkContext(conf);
     }
@@ -30,21 +31,20 @@ public class GradientTest {
     @Test
     public void calcGradientTest() {
         final List<DataPoint> nums = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            double[] x = {i};
 
-            nums.add(new DataPoint(x, i * 2));
-        }
+        double[] x1 = {1.0, 90.0, 8100.0};
+        double[] x2 = {2.0, 101.0, 10201.0};
+        double[] x3 = {3.0, 103.0, 10609.0};
+        nums.add(new DataPoint(x1, 249.0));
+        nums.add(new DataPoint(x2, 338.0));
+        nums.add(new DataPoint(x3, 304.0));
 
-        double[] weightExp = {2};
-        double[] x = {3};
+        JavaRDD<DataPoint> rdd = sparkCtx.parallelize(nums).cache();
 
-        JavaRDD<DataPoint> rdd = sparkCtx.parallelize(nums);
-
-        double[] weightCalc = GradientCalculate.train(rdd, STEP, 10000);
+        double[] weightCalc = GradientCalculate.train(rdd, STEP, 5000, TOLERANCE);
 
 
-        assertEquals(GradientCalculate.getHypothetical(x, weightExp), GradientCalculate.getHypothetical(x, weightCalc), 0.5);
+        assertEquals(249, GradientCalculate.getHypothetical(x1, weightCalc), 10.0);
         sparkCtx.stop();
     }
 }

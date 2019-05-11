@@ -10,7 +10,9 @@
 ```mvn package```
 
 Для запуска Jar требуется выполнить команду <br>
-```spark-submit --class "com.manny.testSpark.Main" --master spark://127.0.0.1:7077 testSpark-1.0.jar <file> <iters> <step> <tolerance> <testData>```
+```
+spark-submit --class "com.manny.testSpark.Main" --master spark://127.0.0.1:7077 testSpark-1.0.jar <file> <iters> <step> <tolerance> <testData>
+```
 
 где ``master spark://127.0.0.1:7077`` - URL-адрес главного узла Spark Cluster;<br>
 ``<file>`` - путь к файлу со значениями;<br>

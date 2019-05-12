@@ -2,6 +2,7 @@ package com.manny.testSpark;
 
 import com.manny.testSpark.Calculating.GradientCalculate;
 import com.manny.testSpark.Entities.DataPoint;
+import com.manny.testSpark.Entities.ExpData;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -40,10 +41,10 @@ public class GradientTest {
 
         JavaRDD<DataPoint> rdd = sparkCtx.parallelize(nums).cache();
 
-        double[] weightCalc = GradientCalculate.train(rdd, STEP, 5000, TOLERANCE);
+        ExpData expData = GradientCalculate.train(rdd, STEP, 100, TOLERANCE);
 
 
-        assertEquals(249, GradientCalculate.getHypothetical(x1, weightCalc), 10.0);
+        assertEquals(249, GradientCalculate.getHypothetical(x1, expData), 1.0);
         sparkCtx.stop();
     }
 }

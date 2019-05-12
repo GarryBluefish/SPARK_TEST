@@ -1,12 +1,15 @@
-package com.manny.testSpark.Calculating;
+package com.manny.testSpark.Calculating.Functions;
 
 import com.manny.testSpark.Entities.DataPoint;
 import org.apache.spark.api.java.function.VoidFunction;
 
-public class HThetaCalculate implements VoidFunction<DataPoint> {
+/**
+ * Функиция вычислени h(theta)
+ */
+public class HThetaFunc implements VoidFunction<DataPoint> {
     private double[] theta;
 
-    public HThetaCalculate(double[] theta) {
+    public HThetaFunc(double[] theta) {
         this.theta = theta;
     }
 

@@ -1,7 +1,6 @@
 package com.manny.testSpark;
 
-import com.manny.testSpark.Entities.DataPoint;
-import com.manny.testSpark.Entities.ParsePoint;
+import com.manny.testSpark.Entities.*;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -21,13 +20,8 @@ public class Main {
         }
 
         double STEP = Double.parseDouble(args[2]); //1E-8
-        int ITERATIONS = Integer.parseInt(args[1]); //5000
-        double TOLERANCE = 1E-1;
-
-        double[] testData = new double[args.length - 3];
-        for (int i = 3; i < args.length; i++) {
-            testData[i - 4] = Double.parseDouble(args[i]);
-        }
+        int ITERATIONS = Integer.parseInt(args[1]); //100
+        double TOLERANCE = 1E-8;
 
         SparkConf sparkConf = new SparkConf()
                 .setAppName("GradientCalculate Spark App")
@@ -35,11 +29,13 @@ public class Main {
 
         JavaSparkContext spark = new JavaSparkContext(sparkConf);
         JavaRDD<String> lines = spark.textFile(args[0]).cache();
+        TestPoint testData = spark.textFile(args[3]).map(new TestParsePoint()).collect().get(0);
 
         JavaRDD<DataPoint> points = lines.map(new ParsePoint()).cache();
+        points.foreach(dataPoint -> System.out.println(dataPoint.getY()));
 
-        double[] weight = train(points, STEP, ITERATIONS, TOLERANCE);
+        ExpData expData = train(points, STEP, ITERATIONS, TOLERANCE);
 
-        System.out.println("FOR data " + Arrays.toString(testData) + " EXPECT " + getHypothetical(testData, weight));
+        System.out.println("FOR data " + Arrays.toString(testData.getX()) + " EXPECT " + getHypothetical(testData.getX(), expData));
     }
 }

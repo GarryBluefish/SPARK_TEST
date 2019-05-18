@@ -32,9 +32,9 @@ public class GradientTest {
     public void calcGradientTest() {
         final List<DataPoint> nums = new ArrayList<>();
 
-        double[] x1 = {1.0, 90.0, 8100.0};
-        double[] x2 = {1.0, 101.0, 10201.0};
-        double[] x3 = {1.0, 103.0, 10609.0};
+        double[] x1 = {90.0, 8100.0};
+        double[] x2 = {101.0, 10201.0};
+        double[] x3 = {103.0, 10609.0};
         nums.add(new DataPoint(x1, 249.0));
         nums.add(new DataPoint(x2, 338.0));
         nums.add(new DataPoint(x3, 304.0));
@@ -44,7 +44,7 @@ public class GradientTest {
         ExpData expData = GradientCalculate.train(rdd, STEP, 100, TOLERANCE);
 
 
-        assertEquals(249, GradientCalculate.getHypothetical(x1, expData), 1.0);
+        assertEquals(249.0, GradientCalculate.getHypothetical(x1, expData), 5.0);
         sparkCtx.stop();
     }
 }

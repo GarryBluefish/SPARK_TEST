@@ -74,7 +74,7 @@ public class GradientCalculate {
         for (int i = 0; i < x.length; i++) {
             hTheta += expData.getWeight()[i] * (x[i] - maxMinValue.getMin()[i + 1]) / (maxMinValue.getMax()[i + 1] - maxMinValue.getMin()[i + 1]);
         }
-        return (hTheta * (maxMinValue.getMax()[0] - maxMinValue.getMin()[0]) + maxMinValue.getMin()[0]) / x.length;
+        return (hTheta * (maxMinValue.getMax()[0] - maxMinValue.getMin()[0]) + maxMinValue.getMin()[0]);
     }
 
     private static MaxMinValue getMaxMin(JavaRDD<DataPoint> points, int size) {

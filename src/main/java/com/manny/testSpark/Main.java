@@ -35,19 +35,11 @@ public class Main {
 
         JavaSparkContext spark = new JavaSparkContext(sparkConf);
 
-        if (args[0].equals("1")) {
-            weight = Generator.generateWeight(Integer.parseInt(args[1]));
-            points = Generator.generateData(Integer.parseInt(args[2]), weight, spark).cache();
-            ITERATIONS = Integer.parseInt(args[3]);
-            origin = points.collect();
-        } else {
-            STEP = Double.parseDouble(args[2]);
-            ITERATIONS = Integer.parseInt(args[2]);
-            JavaRDD<String> lines = spark.textFile(args[1]).cache();
-            points = lines.map(new ParsePoint()).cache();
-            //points = spark.parallelize(test, 1).cache();
-            origin = points.collect();
-        }
+        STEP = Double.parseDouble(args[2]);
+        ITERATIONS = Integer.parseInt(args[2]);
+        JavaRDD<String> lines = spark.textFile(args[1]).cache();
+        points = lines.map(new ParsePoint()).cache();
+        origin = points.collect();
 
         ExpData expData = train(points, STEP, ITERATIONS, TOLERANCE);
 
@@ -56,14 +48,11 @@ public class Main {
     }
 
     private static void printer(double[] weight, ExpData expData, List<DataPoint> points, List<DataPoint> original) {
-
-        if (weight != null) {
-            System.out.print("Generated formula:\nY = ");
-            for (int i = 0; i < weight.length; i++) {
-                System.out.print(weight[i] + "*X" + i);
-                if (i < weight.length - 1) {
-                    System.out.print(" + ");
-                }
+        System.out.print("Generated formula:\nY = ");
+        for (int i = 0; i < weight.length; i++) {
+            System.out.print(weight[i] + "*X" + i);
+            if (i < weight.length - 1) {
+                System.out.print(" + ");
             }
         }
 
@@ -77,17 +66,12 @@ public class Main {
             double denormalizeY = points.get(i).getY() * (maxY - minY) + minY;
             double a = getHypothetical(original.get(i).getX(), expData);
 
-            if (weight != null) {
-                double exp = 0;
-                for (double v : weight) {
-                    exp += v * i;
-                }
-                System.out.println("X = " + Arrays.toString(original.get(i).getX()));
-                System.out.println("With Noise Y = " + denormalizeY + "; Expect Y =  " + exp + "; Calc Y = " + a + "\n");
-            } else {
-                System.out.println("X = " + Arrays.toString(original.get(i).getX()));
-                System.out.println("With Noise Y = " + denormalizeY + "; Calc Y = " + a + "\n");
+            double exp = 0;
+            for (double v : weight) {
+                exp += v * i;
             }
+            System.out.println("X = " + Arrays.toString(original.get(i).getX()));
+            System.out.println("With Noise Y = " + denormalizeY + "; Expect Y =  " + exp + "; Calc Y = " + a + "\n");
         }
     }
 }

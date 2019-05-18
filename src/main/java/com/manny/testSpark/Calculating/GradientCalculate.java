@@ -38,15 +38,15 @@ public class GradientCalculate {
                         (dataPoint.gethTheta() - dataPoint.getY()) * dataPoint.getX()[finalJ])
                         .reduce((a, b) -> a + b);
 
-                weight[j] -= step / size * summ;
+                weight[j] -= (step / size * summ);
             }
 
             DataPoint temp = points.first();
 
             ExpData expData = new ExpData(weight, maxMinValue);
-            if (isTolerance(temp, expData, tolerance)) {
+            /*if (isTolerance(temp, expData, tolerance)) {
                 return expData;
-            }
+            }*/
         }
 
         return new ExpData(weight, maxMinValue);
@@ -54,11 +54,20 @@ public class GradientCalculate {
 
     // проверка разницы между значением Y данных и значения Y предсказанного
     private static boolean isTolerance(DataPoint temp, ExpData expData, double tolerance) {
-        double y = getHypothetical(temp.getX(), expData);
+        double y = getHypotheticalWithoutNorm(temp.getX(), expData.getWeight());
         return Math.abs(y) - Math.abs(temp.getY()) < tolerance;
     }
 
-    // вычисление значения функции
+    // вычисление значения функции без нормализации
+    public static double getHypotheticalWithoutNorm(double[] x, double[] weight) {
+        double hTheta = 0.0;
+        for (int i = 0; i < x.length; i++) {
+            hTheta += weight[i] * x[i];
+        }
+        return hTheta;
+    }
+
+    // вычисление значения функции c нормализацией
     public static double getHypothetical(double[] x, ExpData expData) {
         double hTheta = 0.0;
         MaxMinValue maxMinValue = expData.getMaxMinValue();

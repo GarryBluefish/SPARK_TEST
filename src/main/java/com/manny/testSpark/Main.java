@@ -2,7 +2,6 @@ package com.manny.testSpark;
 
 import com.manny.testSpark.Entities.DataPoint;
 import com.manny.testSpark.Entities.ExpData;
-import com.manny.testSpark.Entities.ParsePoint;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -24,8 +23,8 @@ public class Main {
         double STEP = 1e-15;
         int ITERATIONS;
 
-        if (args.length < 4) {
-            System.err.println("Usage:<generate> <count> <size> <iters>");
+        if (args.length < 3) {
+            System.err.println("Usage:<count> <size> <iters>");
             System.exit(1);
         }
 
@@ -35,10 +34,9 @@ public class Main {
 
         JavaSparkContext spark = new JavaSparkContext(sparkConf);
 
-        STEP = Double.parseDouble(args[2]);
-        ITERATIONS = Integer.parseInt(args[2]);
-        JavaRDD<String> lines = spark.textFile(args[1]).cache();
-        points = lines.map(new ParsePoint()).cache();
+        weight = Generator.generateWeight(Integer.parseInt(args[1]));
+        points = Generator.generateData(Integer.parseInt(args[2]), weight, spark).cache();
+        ITERATIONS = Integer.parseInt(args[3]);
         origin = points.collect();
 
         ExpData expData = train(points, STEP, ITERATIONS, TOLERANCE);
